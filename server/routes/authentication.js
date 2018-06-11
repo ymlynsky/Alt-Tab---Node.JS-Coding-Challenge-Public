@@ -9,12 +9,12 @@ router.post('/api/register', async (req, res) => {
     //Check if this email is already registered
     let email = req.body.email ? req.body.email.toLowerCase() : "";
     let existingUser = await User.findOne({ email: email }).exec()
-
     if(existingUser)
         return res.status(400).send({
             email: { message: `User with email '${email}' already exists` }
         });
 
+    //Generate password hash
     let password = req.body.password;
     let passwordHash = password ? await hash(password) : "";
 
@@ -24,6 +24,7 @@ router.post('/api/register', async (req, res) => {
         passwordHash: passwordHash
     });
 
+    //Insert user
     user.save((err, userOut) => {
 
         if(err) {

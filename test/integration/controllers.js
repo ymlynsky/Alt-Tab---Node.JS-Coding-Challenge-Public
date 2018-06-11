@@ -23,7 +23,7 @@ describe('Authentication Controller', () => {
         _token = data.body.token;
         assert.ok(_token);
       });
-  });
+  }).timeout(15000);
 
   it('should login existing User', () => {
     let _token = null;

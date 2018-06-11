@@ -1,7 +1,7 @@
 
 {
     "db": {
-        "connection": "mongodb+srv://upstack:upstacktest@tracc-master-vt8et.mongodb.net/upstack"
+        "connection": "mongodb://localhost"
     },
     "auth": {
         "jwtPrivateKey": "1f6c0838-aa97-423a-a1ac-89e23446b5bc"
