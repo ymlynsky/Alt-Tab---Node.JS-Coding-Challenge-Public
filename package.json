@@ -3,14 +3,18 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node app.js",
+    "start": "nodemon app.js",
     "test": "mocha --recursive"
   },
   "dependencies": {
     "bcrypt": "^2.0.1",
     "body-parser": "^1.18.3",
+    "config": "^1.30.0",
     "express": "~4.11.1",
-    "mongoose": "^5.1.4"
+    "express-jwt": "^5.3.1",
+    "jsonwebtoken": "^8.3.0",
+    "mongoose": "^5.1.4",
+    "nodemon": "^1.17.5"
   },
   "devDependencies": {
     "chai": "^3.5.0",

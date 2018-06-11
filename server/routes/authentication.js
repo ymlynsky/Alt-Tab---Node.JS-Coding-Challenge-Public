@@ -1,42 +1,61 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const { hash, compare, generateJwt } = require('../service/authentication');
+const User = require('../model/User');
 
-var User = require('../model/User');
+const router = express.Router();
 
-router.post('/api/register', (req, res) => {
+router.post('/api/register', async (req, res) => {
 
-    var user = new User({
-        email: req.body.email,
+    //Check if this email is already registered
+    let email = req.body.email ? req.body.email.toLowerCase() : "";
+    let existingUser = await User.findOne({ email: email }).exec()
+
+    if(existingUser)
+        return res.status(400).send({
+            email: { message: `User with email '${email}' already exists` }
+        });
+
+    let password = req.body.password;
+    let passwordHash = password ? await hash(password) : "";
+
+    let user = new User({
+        email: email,
         name: req.body.name,
-        passwordHash: req.body.password //still need to encode this..
+        passwordHash: passwordHash
     });
 
-
-    user.save((err, user) => {
+    user.save((err, userOut) => {
 
         if(err) {
-            //Logging..
-            res.status(500).send('Error occured');
+            if(err.errors)
+                return res.status(400).send(err.errors);
+            return res.status(500).send('Server Error');
         }
 
-        //Generate token
-
         res.status(201).send({
-            token: 'token here'
+            token: generateJwt(userOut)
         });
     })
-
-
-    //First would need to check if this email is already registered...
-
-
-
-
-
- 
 
 });
 
 
+router.post('/api/login', async (req, res) => {
+
+    let user = await User.findOne({ email: req.body.email.toLowerCase() }).exec()
+    if(!user)
+        return res.status(401).send();
+
+    let password = req.body.password;
+    let isPasswordValid = await compare(password, user.passwordHash);
+
+    if(!isPasswordValid)
+        return res.status(401).send();
+
+    res.status(200).send({
+        token: generateJwt(user)
+    });
+
+});
 
 module.exports = router;
